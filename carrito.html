@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - Cyan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="contenedor">
+        <header>
+            <div class="logo-header">
+                <img src="images/logo.png" alt="Logo de Cyan" class="logo">
+                <a href="index.html" class="titulo-logo">Cyan</a>
+            </div>
+            <div class="botones-header">
+                <button onclick="location.href='login.html'">Iniciar Sesión</button>
+                <button onclick="location.href='carrito.html'">Carrito</button>
+            </div>
+        </header>
+
+        <section class="carrito-section">
+            <h3>Tu Carrito</h3>
+
+            <div id="lista-carrito" class="carrito-lista"></div>
+
+            <div class="carrito-acciones">
+                <button id="btn-pagar" class="btn-pagar">Ir a pagar</button>
+                <button id="vaciar-carrito" class="btn-vaciar">Vaciar carrito</button>
+            </div>
+
+            <div class="carrito-vacio">
+                <img src="images/carrito-vacio.png" class="img-carrito-vacio" alt="Carrito vacío">
+                <p>Aún no has agregado productos al carrito.</p>
+                <button onclick="location.href='index.html'">Ver productos</button>
+            </div>
+        </section>
+
+        <!-- ✅ MODAL DE PAGO -->
+        <div class="modal-pago" id="modal-pago">
+            <div class="modal-contenido">
+                <h3>Finalizar Compra</h3>
+
+                <label>Nombre completo</label>
+                <input type="text" id="nombrePago" placeholder="Ej: Juan Pérez">
+
+                <label>Dirección</label>
+                <input type="text" id="direccionPago" placeholder="Ej: Calle 123 #4-56">
+
+                <label>Método de Pago</label>
+                <select id="pagoMetodo">
+                    <option value="Nequi">Nequi</option>
+                    <option value="Bancolombia">Bancolombia</option>
+                    <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                </select>
+
+                <div class="modal-botones">
+                    <button id="confirmarPago" class="btn-confirmar">Confirmar Compra</button>
+                    <button id="cancelarPago" class="btn-cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <footer style="background-color: #add8e6; padding: 10px; text-align: center;">
+            <p>&copy; 2025 Cyan</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const contenedor = document.getElementById("lista-carrito");
+            const carritoVacio = document.querySelector(".carrito-vacio");
+            const btnPagar = document.getElementById("btn-pagar");
+            const btnVaciar = document.getElementById("vaciar-carrito");
+
+            const modal = document.getElementById("modal-pago");
+            const confirmarPago = document.getElementById("confirmarPago");
+            const cancelarPago = document.getElementById("cancelarPago");
+
+            function cargarCarrito() {
+                let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+                if (carrito.length === 0) {
+                    contenedor.innerHTML = "";
+                    carritoVacio.style.display = "block";
+                    btnPagar.style.display = "none";
+                    btnVaciar.style.display = "none";
+                    return;
+                }
+
+                carritoVacio.style.display = "none";
+                btnPagar.style.display = "inline-block";
+                btnVaciar.style.display = "inline-block";
+
+                contenedor.innerHTML = "";
+
+                carrito.forEach((producto, index) => {
+                    contenedor.innerHTML += `
+                <div class="item-carrito" data-idx="${index}">
+                    <img src="${producto.image}">
+                    <div class="item-detalle">
+                        <p class="nombre">${producto.title}</p>
+                        <p class="precio">$${producto.price}</p>
+                    </div>
+                    <button class="btn-eliminar" data-id="${producto.id}">Eliminar</button>
+                </div>
+            `;
+                });
+
+                activarBotonesEliminar();
+            }
+
+            function activarBotonesEliminar() {
+                const botones = document.querySelectorAll(".btn-eliminar");
+                botones.forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const idProducto = e.target.getAttribute("data-id");
+                        eliminarProductoUnaUnidad(idProducto);
+                    });
+                });
+            }
+
+            function eliminarProductoUnaUnidad(id) {
+                let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+                const idx = carrito.findIndex(item => item.id == id);
+                if (idx === -1) return;
+                carrito.splice(idx, 1);
+                localStorage.setItem("carrito", JSON.stringify(carrito));
+                cargarCarrito();
+            }
+
+            btnVaciar.addEventListener("click", () => {
+                if (confirm("¿Seguro que quieres vaciar el carrito?")) {
+                    localStorage.removeItem("carrito");
+                    cargarCarrito();
+                }
+            });
+
+            // ✅ ABRIR MODAL DE PAGO
+            btnPagar.addEventListener("click", () => {
+                modal.style.display = "flex";
+            });
+
+            // ✅ CERRAR MODAL
+            cancelarPago.addEventListener("click", () => {
+                modal.style.display = "none";
+            });
+
+            // ✅ CONFIRMAR COMPRA (vacía carrito y vuelve al inicio)
+            confirmarPago.addEventListener("click", () => {
+                const nombre = document.getElementById("nombrePago").value.trim();
+                const direccion = document.getElementById("direccionPago").value.trim();
+
+                if (!nombre || !direccion) {
+                    alert("Por favor completa todos los campos.");
+                    return;
+                }
+
+                localStorage.removeItem("carrito");
+                modal.style.display = "none";
+                alert("✅ Compra realizada con éxito. ¡Gracias por tu compra!");
+                window.location.href = "index.html";
+            });
+
+            cargarCarrito();
+        });
+    </script>
+</body>
+
+</html>

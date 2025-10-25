@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesorios de Moda - Cyan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="contenedor">
+
+        <header>
+            <div class="logo-header">
+                <img src="images/logo.png" alt="Logo de Cyan" class="logo">
+                <a href="index.html" class="titulo-logo">Cyan</a>
+            </div>
+            <div class="botones-header">
+                <button onclick="location.href='login.html'">Iniciar Sesión</button>
+                <button onclick="location.href='carrito.html'">Carrito</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="bienvenida">
+                <h3>Accesorios de Moda</h3>
+                <p>Moda Mujer y Moda Hombre</p>
+            </section>
+
+            <section class="categorias-botones">
+                <button class="btn-cat active" data-cat="women's clothing">Moda Mujer</button>
+                <button class="btn-cat" data-cat="men's clothing">Moda Hombre</button>
+            </section>
+
+            <section class="productos-grid" id="lista-moda"></section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-separador"></div>
+            <p>&copy; 2025 Cyan</p>
+        </footer>
+    </div>
+
+    <script>
+        const contenedorModa = document.getElementById("lista-moda");
+        const botonesCategorias = document.querySelectorAll(".btn-cat");
+
+        async function cargarProductos(categoria = "women's clothing") {
+            contenedorModa.innerHTML = `<p class="cargando">Cargando productos...</p>`;
+
+            const res = await fetch("https://fakestoreapi.com/products/category/" + categoria);
+            const data = await res.json();
+
+            contenedorModa.innerHTML = "";
+            data.forEach(p => {
+                contenedorModa.innerHTML += `
+                    <div class="producto-card sombra">
+                        <img src="${p.image}" alt="${p.title}">
+                        <h4>${p.title}</h4>
+                        <p class="precio">$${p.price}</p>
+                        <button onclick="agregarAlCarrito(${p.id}, '${p.title}', '${p.image}', ${p.price})">Agregar al carrito</button>
+                    </div>
+                `;
+            });
+        }
+
+        function agregarAlCarrito(id, title, image, price) {
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            carrito.push({ id, title, image, price });
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            alert("Producto agregado 🛒");
+        }
+
+        botonesCategorias.forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelector(".btn-cat.active").classList.remove("active");
+                btn.classList.add("active");
+                cargarProductos(btn.dataset.cat);
+            });
+        });
+
+        cargarProductos(); // Carga inicial moda mujer
+    </script>
+
+</body>
+
+</html>

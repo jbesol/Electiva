@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accesorios para el Cabello - Cyan</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="contenedor">
+
+        <header>
+            <div class="logo-header">
+                <img src="images/logo.png" alt="Logo de Cyan" class="logo">
+                <a href="index.html" class="titulo-logo">Cyan</a>
+            </div>
+            <div class="botones-header">
+                <button onclick="location.href='login.html'">Iniciar Sesión</button>
+                <button onclick="location.href='carrito.html'">Carrito</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="bienvenida">
+                <h3>Accesorios para el Cabello</h3>
+                <p>Explora vinchas, diademas, moños y más</p>
+            </section>
+
+            <section class="categorias-botones">
+                <button class="btn-cat" data-cat="all">Todos</button>
+                <button class="btn-cat" data-cat="vinchas">Vinchas</button>
+                <button class="btn-cat" data-cat="diademas">Diademas</button>
+                <button class="btn-cat" data-cat="moños">Moños</button>
+            </section>
+
+            <section class="productos-grid" id="lista-productos"></section>
+        </main>
+
+        <footer style="background-color: #add8e6; padding: 10px; text-align: center;">
+            <p>&copy; 2025 Cyan</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // array base (mantiene categorías locales: vinchas, diademas, moños)
+            const productosCabello = [
+                { id: 101, title: "Vincha Rosa", price: 9.99, image: "", cat: "vinchas" },
+                { id: 102, title: "Vincha Floral", price: 12.49, image: "", cat: "vinchas" },
+                { id: 103, title: "Diadema Negra", price: 10.49, image: "", cat: "diademas" },
+                { id: 104, title: "Diadema Deluxe", price: 14.99, image: "", cat: "diademas" },
+                { id: 105, title: "Moño Celeste", price: 7.99, image: "", cat: "moños" },
+                { id: 106, title: "Moño Rosa", price: 8.49, image: "", cat: "moños" }
+            ];
+
+            const contenedor = document.getElementById("lista-productos");
+
+            // función que renderiza lista (si filtro === null o 'all' -> muestra todo)
+            function renderProductos(filtro = "all") {
+                contenedor.innerHTML = "";
+                const lista = productosCabello.filter(p => filtro === "all" ? true : p.cat === filtro);
+                lista.forEach(p => {
+                    contenedor.innerHTML += `
+                        <div class="producto-card sombra" data-id="${p.id}">
+                            <img src="${p.image || 'images/placeholder.png'}" alt="${escapeHtml(p.title)}">
+                            <h4>${escapeHtml(p.title)}</h4>
+                            <p>$${Number(p.price).toFixed(2)}</p>
+                            <button class="btn-add" data-id="${p.id}">Agregar al carrito</button>
+                        </div>
+                    `;
+                });
+
+                // activar botones recién creados
+                document.querySelectorAll(".btn-add").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const id = Number(e.currentTarget.dataset.id);
+                        agregarAlCarrito(id);
+                    });
+                });
+            }
+
+            // agregar producto completo al carrito (no solo id)
+            function agregarAlCarrito(id) {
+                const producto = productosCabello.find(p => p.id === id);
+                if (!producto) return alert("Producto no encontrado.");
+
+                const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+                // evitar agregar exactamente el mismo objeto repetido si no quieres duplicados:
+                // carrito.push(producto);
+                // aquí agregamos copia (para evitar referencias)
+                carrito.push({ ...producto, cantidad: 1 });
+                localStorage.setItem("carrito", JSON.stringify(carrito));
+                // notificación ligera
+                mostrarToast("Producto agregado al carrito");
+            }
+
+            // toast simple (no depende de librerías)
+            function mostrarToast(msg) {
+                const t = document.createElement("div");
+                t.textContent = msg;
+                t.style.position = "fixed";
+                t.style.right = "20px";
+                t.style.bottom = "20px";
+                t.style.background = "rgba(0,0,0,0.8)";
+                t.style.color = "white";
+                t.style.padding = "10px 14px";
+                t.style.borderRadius = "8px";
+                t.style.zIndex = 9999;
+                t.style.fontSize = "14px";
+                document.body.appendChild(t);
+                setTimeout(() => {
+                    t.style.transition = "opacity 300ms";
+                    t.style.opacity = "0";
+                    setTimeout(() => t.remove(), 300);
+                }, 1100);
+            }
+
+            // helper escapar texto
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;");
+            }
+
+            // ---------- CARGAR IMÁGENES DESDE LA API (FAKESTORE) ----------
+            // Asignamos imágenes reales desde la API (categoría jewelery)
+            // Si falla la API, los productos mantendrán el placeholder
+            (async function asignarImagenesDesdeAPI() {
+                try {
+                    const res = await fetch("https://fakestoreapi.com/products/category/jewelery");
+                    if (!res.ok) throw new Error("API no respondió");
+                    const data = await res.json();
+                    // data es array de objetos con .image
+                    if (Array.isArray(data) && data.length > 0) {
+                        // asignamos imágenes por índice (seguro aun si tamaños distintos)
+                        productosCabello.forEach((p, i) => {
+                            p.image = data[i % data.length].image;
+                        });
+                    }
+                } catch (err) {
+                    console.warn("No se pudieron obtener imágenes desde la API:", err);
+                    // opcional: asignar imágenes locales fallback si tienes
+                    // productosCabello[0].image = 'images/vincha1.jpg';
+                } finally {
+                    // una vez intentada la carga, renderizamos inicialmente todo
+                    renderProductos("all");
+                }
+            })();
+
+            // activar filtros de botones
+            document.querySelectorAll(".btn-cat").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const cat = btn.dataset.cat || "all";
+                    renderProductos(cat);
+                    // marcar visualmente el botón activo (opcional)
+                    document.querySelectorAll(".btn-cat").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                });
+            });
+
+            // render inicial con placeholder mientras carga la API
+            renderProductos("all");
+        });
+    </script>
+
+</body>
+
+</html>

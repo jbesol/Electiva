@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Cyan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="contenedor">
+        <header>
+            <div class="logo-header">
+                <img src="images/logo.png" alt="Logo de Cyan" class="logo">
+                <h2>Cyan</h2>
+            </div>
+            <div class="botones-header">
+                <button onclick="location.href='login.html'">Iniciar Sesión</button>
+                <button onclick="location.href='carrito.html'">Carrito</button>
+            </div>
+        </header>
+
+        <section class="login-section">
+            <h3>Iniciar Sesión</h3>
+
+            <form id="login-form" class="login-form">
+                <input type="email" id="email" placeholder="Correo electrónico" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <button type="submit">Entrar</button>
+            </form>
+
+            <p class="login-extra">¿No tienes cuenta? <a href="#">Registrarse</a></p>
+        </section>
+
+        <footer style="background-color: #add8e6; padding: 10px; text-align: center;">
+            <p>&copy; 2025 Cyan</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("login-form");
+            const inputEmail = document.getElementById("email");
+            const inputPassword = document.getElementById("password");
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const email = inputEmail.value.trim();
+                const password = inputPassword.value.trim();
+
+                if (email === "" || password === "") {
+                    alert("Por favor completa todos los campos.");
+                    return;
+                }
+
+                const usuario = {
+                    email: email,
+                    logueado: true
+                };
+
+                localStorage.setItem("usuario", JSON.stringify(usuario));
+
+                alert("✅ Inicio de sesión exitoso");
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+
+</body>
+
+</html>
+
+    

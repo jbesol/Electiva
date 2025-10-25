@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="contenedor">
+        <header>
+            <div class="logo-header">
+                <img src="images/logo.png" alt="Logo de Cyan" class="logo">
+                <h2>Cyan</h2>
+            </div>
+            <div class="botones-header">
+                <button id="btn-login"> Inicar Sesion</button>
+                <button id="btn-carrito"> Carrito</button>
+            </div>
+        </header>
+
+        <section class="bienvenida">
+            <h3>Bienvenidos a Cyan</h3>
+            <p>Tu tienda en línea de confianza</p>
+        </section>
+
+        <section class="barra-busqueda">
+            <div class="buscador">
+                <img class="icono-buscar" src="images/icono-busqueda.png" alt="Buscar">
+                <input type="text" placeholder="Buscar productos...">
+                <button>Buscar</button>
+            </div>
+        </section>
+
+        <main>
+            <section class="categorias">
+                <h3>Categorías</h3>
+                <div class="contenedor-categorias">
+                    <div class="categoria-card">
+                        <h4>Accesorios para el Cabello</h4>
+                        <p>Vinchas, diademas y más</p>
+                        <button id="btn-cabello" class="btn-categoria">Ver más</button>
+                    </div>
+
+                    <div class="categoria-card">
+                        <h4>Accesorios de Moda</h4>
+                        <p>Pañuelos, bufandas y más</p>
+                        <button id="btn-moda" class="btn-categoria">Ver más</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="productos">
+                <div class="productos-header">
+                    <h3>Productos Destacados</h3>
+                    <span class="cantidad-productos">10 productos</span>
+                </div>
+
+                <div class="contenedor-productos" id="contenedor-productos"></div>
+
+            </section>
+        </main>
+        <footer class="footer">
+            <div class="footer-separador"></div>
+
+            <div class="footer-contenido">
+                <div class="footer-columna">
+                    <h4>Sobre Nosotros</h4>
+                    <a href="#">Quiénes somos</a>
+                    <a href="#">Términos y condiciones</a>
+                    <a href="#">Políticas de privacidad</a>
+                </div>
+
+                <div class="footer-columna">
+                    <h4>Atención</h4>
+                    <p>📧 soporte@cyan.com</p>
+                    <p>📱 +57 300 000 0000</p>
+                    <p>📍 Bogotá, Colombia</p>
+                </div>
+
+                <div class="footer-columna"">
+            <h4>Síguenos</h4>
+            <a href=" #">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">TikTok</a>
+                </div>
+            </div>
+
+            <div class="footer-copy">
+                <p>&copy; 2025 Cyan</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
